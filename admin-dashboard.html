@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EduEvents Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom gradient for navigation */
+        .gradient-bg {
+            background: linear-gradient(to right, #6366F1, #8B5CF6); /* Tailwind indigo-500 to purple-500 */
+        }
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: #1f2937; /* Dark gray */
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #4b5563; /* Medium gray */
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* Lighter gray on hover */
+        }
+        /* Active nav item styling */
+        .nav-item.active-nav {
+            background-color: #4b5563; /* Tailwind gray-700 */
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 bg-gray-800 text-white flex flex-col overflow-y-auto shadow-lg transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out absolute md:relative z-40">
+        <div class="p-6 flex items-center justify-center border-b border-gray-700">
+            <i class="fas fa-graduation-cap text-3xl text-indigo-400 mr-3"></i>
+            <span class="text-2xl font-bold">LearnX Admin</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2">
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="dashboard">
+                <i class="fas fa-home mr-3 text-lg"></i>
+                Dashboard
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="pending-approvals">
+                <i class="fas fa-hourglass-half mr-3 text-lg"></i>
+                Pending Approvals
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="active-events">
+                <i class="fas fa-calendar-check mr-3 text-lg"></i>
+                Active Events
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="expired-events">
+                <i class="fas fa-calendar-times mr-3 text-lg"></i>
+                Expired Events
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="institutes">
+                <i class="fas fa-university mr-3 text-lg"></i>
+                Institutes
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="messages">
+                <i class="fas fa-envelope mr-3 text-lg"></i>
+                Messages
+            </a>
+            <a href="#" class="nav-item flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200" data-section="reports">
+                <i class="fas fa-chart-line mr-3 text-lg"></i>
+                Reports
+            </a>
+        </nav>
+        <div class="p-4 border-t border-gray-700">
+            <a href="index.html" class="flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-700 hover:text-white transition duration-200">
+                <i class="fas fa-arrow-left mr-3 text-lg"></i>
+                Back to Site
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col overflow-hidden">
+        <!-- Top Navbar -->
+        <header class="gradient-bg text-white shadow-md p-4 flex items-center justify-between z-10">
+            <button id="sidebarToggle" class="md:hidden text-white focus:outline-none mr-4">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <h1 class="text-2xl font-semibold">Admin Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationToggle" class="text-white hover:text-gray-200 focus:outline-none">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span id="notificationCount" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full transform translate-x-1/2 -translate-y-1/2">0</span>
+                    </button>
+                    <!-- Notification Dropdown -->
+                    <div id="notificationDropdown" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">No new notifications</a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="profileDropdownToggle" class="flex items-center text-white hover:text-gray-200 focus:outline-none">
+                        <img src="https://placehold.co/32x32/6366F1/white?text=A" alt="Admin Avatar" class="w-8 h-8 rounded-full mr-2 border-2 border-white">
+                        <span class="hidden md:inline">Admin User</span>
+                        <i class="fas fa-caret-down ml-2"></i>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div id="profileDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                        <a href="login.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Sections -->
+        <main class="flex-1 overflow-y-auto p-6">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="content-section">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Overview</h2>
+
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Events</p>
+                            <h3 id="totalEventsCount" class="text-3xl font-bold text-gray-800">0</h3>
+                        </div>
+                        <i class="fas fa-calendar-alt text-4xl text-indigo-400"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Pending Approvals</p>
+                            <h3 id="pendingApprovalsCount" class="text-3xl font-bold text-yellow-600">0</h3>
+                        </div>
+                        <i class="fas fa-hourglass-half text-4xl text-yellow-400"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Approved Events</p>
+                            <h3 id="approvedEventsCount" class="text-3xl font-bold text-green-600">0</h3>
+                        </div>
+                        <i class="fas fa-check-circle text-4xl text-green-400"></i>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Expired Events</p>
+                            <h3 id="expiredEventsCount" class="text-3xl font-bold text-red-600">0</h3>
+                        </div>
+                        <i class="fas fa-calendar-times text-4xl text-red-400"></i>
+                    </div>
+                </div>
+
+                <!-- Pending Events Table (on Dashboard) -->
+                <div class="bg-white p-6 rounded-lg shadow-md mb-10">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Pending Events for Approval</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Event Title</th>
+                                    <th class="py-3 px-4 border-b">Institute</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b">Category</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardPendingEventsTableBody" class="divide-y divide-gray-200">
+                                <!-- Pending events will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noDashboardPendingEvents" class="text-center text-gray-500 py-4 hidden">No pending events.</p>
+                    </div>
+                </div>
+
+                <!-- Active Events Table (on Dashboard) -->
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-bold text-gray-800 mb-6">Recently Active Events</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Event Title</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b">Category</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboardActiveEventsTableBody" class="divide-y divide-gray-200">
+                                <!-- Active events will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noDashboardActiveEvents" class="text-center text-gray-500 py-4 hidden">No active events.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Pending Approvals Section -->
+            <section id="pending-approvals" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Pending Approvals</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Event Title</th>
+                                    <th class="py-3 px-4 border-b">Institute</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b">Category</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingApprovalsTableBody" class="divide-y divide-gray-200">
+                                <!-- Pending events will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noPendingApprovals" class="text-center text-gray-500 py-4 hidden">No pending approvals.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Active Events Section -->
+            <section id="active-events" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Active Events</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="flex justify-end mb-4">
+                        <button id="addEventBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                            <i class="fas fa-plus mr-2"></i>Add New Event
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Event Title</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b">Category</th>
+                                    <th class="py-3 px-4 border-b">Institute</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allActiveEventsTableBody" class="divide-y divide-gray-200">
+                                <!-- Active events will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noAllActiveEvents" class="text-center text-gray-500 py-4 hidden">No active events.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Expired Events Section -->
+            <section id="expired-events" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Expired Events</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Event Title</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b">Category</th>
+                                    <th class="py-3 px-4 border-b">Institute</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expiredEventsTableBody" class="divide-y divide-gray-200">
+                                <!-- Expired events will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noExpiredEvents" class="text-center text-gray-500 py-4 hidden">No expired events.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Institutes Section -->
+            <section id="institutes" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Registered Institutes</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">Institute Name</th>
+                                    <th class="py-3 px-4 border-b">Email</th>
+                                    <th class="py-3 px-4 border-b">Events Posted</th>
+                                    <th class="py-3 px-4 border-b text-center">Status</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="institutesTableBody" class="divide-y divide-gray-200">
+                                <!-- Institutes will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noInstitutes" class="text-center text-gray-500 py-4 hidden">No institutes registered.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Messages Section -->
+            <section id="messages" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Message Inbox</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                            <thead>
+                                <tr class="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th class="py-3 px-4 border-b">From</th>
+                                    <th class="py-3 px-4 border-b">Subject</th>
+                                    <th class="py-3 px-4 border-b">Date</th>
+                                    <th class="py-3 px-4 border-b text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="messagesTableBody" class="divide-y divide-gray-200">
+                                <!-- Messages will be loaded here -->
+                            </tbody>
+                        </table>
+                        <p id="noMessages" class="text-center text-gray-500 py-4 hidden">No messages.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reports Section -->
+            <section id="reports" class="content-section hidden">
+                <h2 class="text-3xl font-bold text-gray-800 mb-8">Reports & Analytics</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md min-h-[300px] flex items-center justify-center">
+                    <p class="text-gray-500">Reports and analytics will be displayed here.</p>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Event Form Modal (Add/Edit) -->
+    <div id="eventFormModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto p-8 relative">
+            <button onclick="closeEventFormModal()" class="absolute top-4 right-4 bg-gray-200 rounded-full p-2 shadow-md hover:bg-gray-300">
+                <i class="fas fa-times text-gray-600"></i>
+            </button>
+            <h2 id="formTitle" class="text-2xl font-bold text-gray-800 mb-6">Add New Event</h2>
+            <form id="eventForm" class="space-y-4">
+                <div>
+                    <label for="eventTitleInput" class="block text-gray-700 text-sm font-bold mb-2">Event Title</label>
+                    <input type="text" id="eventTitleInput" name="title" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventDateInput" class="block text-gray-700 text-sm font-bold mb-2">Date & Time</label>
+                    <input type="datetime-local" id="eventDateInput" name="date" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventTypeInput" class="block text-gray-700 text-sm font-bold mb-2">Type</label>
+                    <select id="eventTypeInput" name="type" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                        <option value="">Select Type</option>
+                        <option value="Webinar">Webinar</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Course">Course</option>
+                        <option value="Workshop">Workshop</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="eventPriceInput" class="block text-gray-700 text-sm font-bold mb-2">Price (e.g., Free, $49)</label>
+                    <input type="text" id="eventPriceInput" name="price" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventLocationInput" class="block text-gray-700 text-sm font-bold mb-2">Location</label>
+                    <input type="text" id="eventLocationInput" name="location" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventInstructorInput" class="block text-gray-700 text-sm font-bold mb-2">Instructor</label>
+                    <input type="text" id="eventInstructorInput" name="instructor" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventOrganizerInput" class="block text-gray-700 text-sm font-bold mb-2">Organizer Name</label>
+                    <input type="text" id="eventOrganizerInput" name="organizer" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required>
+                </div>
+                <div>
+                    <label for="eventDescriptionInput" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
+                    <textarea id="eventDescriptionInput" name="description" rows="3" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500" required></textarea>
+                </div>
+                <div>
+                    <label for="eventLearningsInput" class="block text-gray-700 text-sm font-bold mb-2">What You'll Learn (comma-separated)</label>
+                    <input type="text" id="eventLearningsInput" name="learnings" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="eventImageInput" class="block text-gray-700 text-sm font-bold mb-2">Image URL (Optional)</label>
+                    <input type="url" id="eventImageInput" name="image" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label for="eventOrganizerLogoInput" class="block text-gray-700 text-sm font-bold mb-2">Organizer Logo URL (Optional)</label>
+                    <input type="url" id="eventOrganizerLogoInput" name="organizerLogo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeEventFormModal()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition duration-300">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">Save Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.querySelector('aside');
+        const navItems = document.querySelectorAll('.nav-item');
+        const contentSections = document.querySelectorAll('.content-section');
+        const profileDropdownToggle = document.getElementById('profileDropdownToggle');
+        const profileDropdown = document.getElementById('profileDropdown');
+        const notificationToggle = document.getElementById('notificationToggle');
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        const notificationCount = document.getElementById('notificationCount');
+
+        // Table bodies
+        const dashboardPendingEventsTableBody = document.getElementById('dashboardPendingEventsTableBody');
+        const dashboardActiveEventsTableBody = document.getElementById('dashboardActiveEventsTableBody');
+        const pendingApprovalsTableBody = document.getElementById('pendingApprovalsTableBody');
+        const allActiveEventsTableBody = document.getElementById('allActiveEventsTableBody');
+        const expiredEventsTableBody = document.getElementById('expiredEventsTableBody');
+        const institutesTableBody = document.getElementById('institutesTableBody');
+        const messagesTableBody = document.getElementById('messagesTableBody');
+
+        // No data messages
+        const noDashboardPendingEvents = document.getElementById('noDashboardPendingEvents');
+        const noDashboardActiveEvents = document.getElementById('noDashboardActiveEvents');
+        const noPendingApprovals = document.getElementById('noPendingApprovals');
+        const noAllActiveEvents = document.getElementById('noAllActiveEvents');
+        const noExpiredEvents = document.getElementById('noExpiredEvents');
+        const noInstitutes = document.getElementById('noInstitutes');
+        const noMessages = document.getElementById('noMessages');
+
+        // Summary cards
+        const totalEventsCount = document.getElementById('totalEventsCount');
+        const pendingApprovalsCount = document.getElementById('pendingApprovalsCount');
+        const approvedEventsCount = document.getElementById('approvedEventsCount');
+        const expiredEventsCount = document.getElementById('expiredEventsCount');
+
+        // Event Form Modal elements
+        const addEventBtn = document.getElementById('addEventBtn');
+        const eventFormModal = document.getElementById('eventFormModal');
+        const eventForm = document.getElementById('eventForm');
+        const formTitle = document.getElementById('formTitle');
+        let editingEventId = null; // To track which event is being edited
+
+        // Event form input fields
+        const eventTitleInput = document.getElementById('eventTitleInput');
+        const eventDateInput = document.getElementById('eventDateInput');
+        const eventTypeInput = document.getElementById('eventTypeInput');
+        const eventPriceInput = document.getElementById('eventPriceInput');
+        const eventLocationInput = document.getElementById('eventLocationInput');
+        const eventInstructorInput = document.getElementById('eventInstructorInput');
+        const eventOrganizerInput = document.getElementById('eventOrganizerInput');
+        const eventDescriptionInput = document.getElementById('eventDescriptionInput');
+        const eventLearningsInput = document.getElementById('eventLearningsInput');
+        const eventImageInput = document.getElementById('eventImageInput');
+        const eventOrganizerLogoInput = document.getElementById('eventOrganizerLogoInput');
+
+
+        // --- Data Storage (Simulated Backend with localStorage) ---
+        let allEvents = [];
+        let allInstitutes = [];
+        let allMessages = [];
+
+        function loadData() {
+            try {
+                const storedEvents = localStorage.getItem('adminEvents');
+                if (storedEvents) {
+                    allEvents = JSON.parse(storedEvents);
+                } else {
+                    // Default dummy events if nothing in localStorage
+                    allEvents = [
+                        { id: 'e1', title: "AI for Beginners", date: "2025-08-01T10:00:00", description: "Intro to AI.", type: "Webinar", price: "Free", image: "https://placehold.co/800x400/AD90F8/white?text=AI", organizerLogo: "https://placehold.co/40x40/90B7F8/white?text=TI", organizer: "Tech Education Institute", organizerDesc: "Specializing in technology education since 2010", attendees: 45, totalSeats: 100, location: "Online (Zoom)", instructor: "Dr. Sarah Johnson", learnings: ["AI concepts", "ML basics"], status: "approved" },
+                        { id: 'e2', title: "Digital Marketing Masterclass", date: "2025-08-05T14:00:00", description: "Advanced digital marketing.", type: "Seminar", price: "$49", image: "https://placehold.co/800x400/D6A3A3/white?text=DM", organizerLogo: "https://placehold.co/40x40/D6A3A3/white?text=MA", organizer: "Marketing Academy", organizerDesc: "Leading experts in digital marketing training.", attendees: 28, totalSeats: 50, location: "Online (Google Meet)", instructor: "Mr. John Smith", learnings: ["SEO", "Social Media"], status: "approved" },
+                        { id: 'e3', title: "Data Science Bootcamp", date: "2025-08-10T09:00:00", description: "8-week intensive course.", type: "Course", price: "$199", image: "https://placehold.co/800x400/F0B18A/white?text=DS", organizerLogo: "https://placehold.co/40x40/F0B18A/white?text=DSI", organizer: "Data Science Institute", organizerDesc: "Your gateway to a career in data science.", attendees: 62, totalSeats: 75, location: "Hybrid (Online & On-site)", instructor: "Dr. Emily White", learnings: ["Python", "ML"], status: "approved" },
+                        { id: 'e4', title: "Introduction to Quantum Computing", date: "2025-08-01T10:00:00", description: "Basics of quantum computing.", type: "Webinar", price: "Free", image: "https://placehold.co/800x400/AD90F8/white?text=QC", organizerLogo: "https://placehold.co/40x40/90B7F8/white?text=QI", organizer: "Quantum Innovations Inc.", organizerDesc: "Pioneers in quantum research.", attendees: 0, totalSeats: 50, location: "Online (Zoom)", instructor: "Dr. Alice Bell", learnings: ["Quantum basics"], status: "pending" },
+                        { id: 'e5', title: "Advanced AI Ethics Workshop", date: "2025-07-28T13:00:00", description: "Ethical considerations in AI.", type: "Workshop", price: "$75", image: "https://placehold.co/800x400/D6A3A3/white?text=AI+Ethics", organizerLogo: "https://placehold.co/40x40/D6A3A3/white?text=EAI", organizer: "Ethical AI Consortium", organizerDesc: "Promoting responsible AI.", attendees: 0, totalSeats: 30, location: "Online (Google Meet)", instructor: "Prof. Charles Green", learnings: ["AI ethics"], status: "pending" },
+                        { id: 'e6', title: "Web Development Fundamentals", date: "2025-07-15T10:00:00", description: "Learn HTML, CSS, JS.", type: "Workshop", price: "Free", image: "https://placehold.co/800x400/A8D8AD/white?text=Web+Dev", organizerLogo: "https://placehold.co/40x40/A8D8AD/white?text=WC", organizer: "Web Creators Hub", organizerDesc: "Building web developers.", attendees: 120, totalSeats: 150, location: "Online (Zoom)", instructor: "Ms. Priya Sharma", learnings: ["HTML", "CSS", "JS"], status: "approved" }, // Expired
+                        { id: 'e7', title: "Graphic Design Principles", date: "2025-07-20T16:00:00", description: "Core graphic design.", type: "Webinar", price: "$15", image: "https://placehold.co/800x400/E89E9E/white?text=GD", organizerLogo: "https://placehold.co/40x40/E89E9E/white?text=CAI", organizer: "Creative Arts Institute", organizerDesc: "Fostering creativity.", attendees: 30, totalSeats: 60, location: "Online (Webex)", instructor: "Mr. David Lee", learnings: ["Design elements"], status: "approved" }, // Expired (current time is 8:45 AM IST, so 4 PM event is in the future today)
+                        { id: 'e8', title: "Blockchain for Business Leaders", date: "2025-08-15T11:00:00", description: "Blockchain applications.", type: "Seminar", price: "$99", image: "https://placehold.co/800x400/C2B2D8/white?text=BC", organizerLogo: "https://placehold.co/40x40/C2B2D8/white?text=FTA", organizer: "FinTech Academy", organizerDesc: "Innovating finance.", attendees: 0, totalSeats: 40, location: "Online (Microsoft Teams)", instructor: "Dr. Kevin Brown", learnings: ["Blockchain basics"], status: "pending" }
+                    ];
+                }
+
+                const storedInstitutes = localStorage.getItem('adminInstitutes');
+                if (storedInstitutes) {
+                    allInstitutes = JSON.parse(storedInstitutes);
+                } else {
+                    allInstitutes = [
+                        { id: 'i1', name: "Tech University", email: "info@techuni.edu", eventsPosted: 12, status: "active" },
+                        { id: 'i2', name: "Global Business School", email: "contact@gbs.org", eventsPosted: 8, status: "active" },
+                        { id: 'i3', name: "Design Academy", email: "admissions@designaca.com", eventsPosted: 5, status: "blocked" },
+                        { id: 'i4', name: "Language Institute", email: "learn@langinst.com", eventsPosted: 7, status: "active" }
+                    ];
+                }
+
+                const storedMessages = localStorage.getItem('adminMessages');
+                if (storedMessages) {
+                    allMessages = JSON.parse(storedMessages);
+                } else {
+                    allMessages = [
+                        { id: 'm1', from: "John Doe (Student)", subject: "Inquiry about Data Science Bootcamp", date: "2025-07-19T10:30:00", message: "I have a question about the prerequisites for the Data Science Bootcamp." },
+                        { id: 'm2', from: "Tech University (Institute)", subject: "New Event Approval Request", date: "2025-07-18T15:00:00", message: "We have submitted a new event for approval: 'Future of AI Conference'." },
+                        { id: 'm3', from: "Jane Smith (Student)", subject: "Feedback on Webinar", date: "2025-07-17T09:00:00", message: "The 'AI for Beginners' webinar was excellent!" }
+                    ];
+                }
+
+            } catch (e) {
+                console.error("Error loading data from localStorage:", e);
+                // Fallback to empty arrays if localStorage is not accessible
+                allEvents = [];
+                allInstitutes = [];
+                allMessages = [];
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('adminEvents', JSON.stringify(allEvents));
+                localStorage.setItem('adminInstitutes', JSON.stringify(allInstitutes));
+                localStorage.setItem('adminMessages', JSON.stringify(allMessages));
+            } catch (e) {
+                console.error("Error saving data to localStorage:", e);
+            }
+        }
+
+        // --- UI Rendering Functions ---
+
+        function renderDashboard() {
+            updateSummaryCards();
+            renderPendingEventsTable(dashboardPendingEventsTableBody, 2); // Show top 2 pending on dashboard
+            renderActiveEventsTable(dashboardActiveEventsTableBody, 2); // Show top 2 active on dashboard
+        }
+
+        function updateSummaryCards() {
+            const now = new Date();
+            const pending = allEvents.filter(e => e.status === 'pending');
+            const approved = allEvents.filter(e => e.status === 'approved' && new Date(e.date) > now);
+            const expired = allEvents.filter(e => e.status === 'approved' && new Date(e.date) <= now);
+
+            totalEventsCount.textContent = allEvents.length;
+            pendingApprovalsCount.textContent = pending.length;
+            approvedEventsCount.textContent = approved.length;
+            expiredEventsCount.textContent = expired.length;
+
+            notificationCount.textContent = pending.length + allMessages.length; // Update notification count
+            if (notificationCount.textContent === '0') {
+                notificationCount.classList.add('hidden');
+            } else {
+                notificationCount.classList.remove('hidden');
+            }
+        }
+
+        function renderPendingEventsTable(tableBodyElement, limit = -1) {
+            tableBodyElement.innerHTML = '';
+            const pendingEvents = allEvents.filter(e => e.status === 'pending').sort((a, b) => new Date(a.date) - new Date(b.date));
+            const eventsToRender = limit > 0 ? pendingEvents.slice(0, limit) : pendingEvents;
+
+            if (eventsToRender.length === 0) {
+                (tableBodyElement === dashboardPendingEventsTableBody ? noDashboardPendingEvents : noPendingApprovals).classList.remove('hidden');
+                return;
+            } else {
+                (tableBodyElement === dashboardPendingEventsTableBody ? noDashboardPendingEvents : noPendingApprovals).classList.add('hidden');
+            }
+
+            eventsToRender.forEach(event => {
+                const row = tableBodyElement.insertRow();
+                row.className = 'hover:bg-gray-50';
+                const eventDate = new Date(event.date);
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${event.title}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.organizer}</td>
+                    <td class="py-3 px-4 text-gray-700">${eventDate.toLocaleDateString()}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.type}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="approveEvent('${event.id}')" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded-md mr-2">Approve</button>
+                        <button onclick="rejectEvent('${event.id}')" class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded-md">Reject</button>
+                    </td>
+                `;
+            });
+        }
+
+        function renderActiveEventsTable(tableBodyElement, limit = -1) {
+            tableBodyElement.innerHTML = '';
+            const now = new Date();
+            const activeEvents = allEvents.filter(e => e.status === 'approved' && new Date(e.date) > now).sort((a, b) => new Date(a.date) - new Date(b.date));
+            const eventsToRender = limit > 0 ? activeEvents.slice(0, limit) : activeEvents;
+
+            if (eventsToRender.length === 0) {
+                (tableBodyElement === dashboardActiveEventsTableBody ? noDashboardActiveEvents : noAllActiveEvents).classList.remove('hidden');
+                return;
+            } else {
+                (tableBodyElement === dashboardActiveEventsTableBody ? noDashboardActiveEvents : noAllActiveEvents).classList.add('hidden');
+            }
+
+            eventsToRender.forEach(event => {
+                const row = tableBodyElement.insertRow();
+                row.className = 'hover:bg-gray-50';
+                const eventDate = new Date(event.date);
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${event.title}</td>
+                    <td class="py-3 px-4 text-gray-700">${eventDate.toLocaleDateString()}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.type}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.organizer}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="editEvent('${event.id}')" class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-edit"></i> Edit</button>
+                        <button onclick="deleteEvent('${event.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        function renderExpiredEventsTable(tableBodyElement) {
+            tableBodyElement.innerHTML = '';
+            const now = new Date();
+            const expiredEvents = allEvents.filter(e => e.status === 'approved' && new Date(e.date) <= now).sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest expired first
+
+            if (expiredEvents.length === 0) {
+                noExpiredEvents.classList.remove('hidden');
+                return;
+            } else {
+                noExpiredEvents.classList.add('hidden');
+            }
+
+            expiredEvents.forEach(event => {
+                const row = tableBodyElement.insertRow();
+                row.className = 'hover:bg-gray-50';
+                const eventDate = new Date(event.date);
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${event.title}</td>
+                    <td class="py-3 px-4 text-gray-700">${eventDate.toLocaleDateString()}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.type}</td>
+                    <td class="py-3 px-4 text-gray-700">${event.organizer}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="archiveEvent('${event.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-archive"></i> Archive</button>
+                    </td>
+                `;
+            });
+        }
+
+        function renderInstitutesTable(tableBodyElement) {
+            tableBodyElement.innerHTML = '';
+            if (allInstitutes.length === 0) {
+                noInstitutes.classList.remove('hidden');
+                return;
+            } else {
+                noInstitutes.classList.add('hidden');
+            }
+
+            allInstitutes.forEach(institute => {
+                const row = tableBodyElement.insertRow();
+                row.className = 'hover:bg-gray-50';
+                const statusClass = institute.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+                const actionButton = institute.status === 'active' ?
+                    `<button onclick="blockInstitute('${institute.id}')" class="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1 rounded-md">Block</button>` :
+                    `<button onclick="unblockInstitute('${institute.id}')" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-1 rounded-md">Unblock</button>`;
+
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${institute.name}</td>
+                    <td class="py-3 px-4 text-gray-700">${institute.email}</td>
+                    <td class="py-3 px-4 text-gray-700">${institute.eventsPosted}</td>
+                    <td class="py-3 px-4 text-center">
+                        <span class="${statusClass} text-xs font-medium px-2.5 py-0.5 rounded-full">${institute.status.charAt(0).toUpperCase() + institute.status.slice(1)}</span>
+                    </td>
+                    <td class="py-3 px-4 text-center">${actionButton}</td>
+                `;
+            });
+        }
+
+        function renderMessagesTable(tableBodyElement) {
+            tableBodyElement.innerHTML = '';
+            if (allMessages.length === 0) {
+                noMessages.classList.remove('hidden');
+                return;
+            } else {
+                noMessages.classList.add('hidden');
+            }
+
+            allMessages.forEach(message => {
+                const row = tableBodyElement.insertRow();
+                row.className = 'hover:bg-gray-50';
+                const messageDate = new Date(message.date);
+                row.innerHTML = `
+                    <td class="py-3 px-4 text-gray-800">${message.from}</td>
+                    <td class="py-3 px-4 text-gray-700">${message.subject}</td>
+                    <td class="py-3 px-4 text-gray-700">${messageDate.toLocaleDateString()}</td>
+                    <td class="py-3 px-4 text-center">
+                        <button onclick="viewMessage('${message.id}')" class="text-blue-600 hover:text-blue-800 mr-3"><i class="fas fa-eye"></i> View</button>
+                        <button onclick="deleteMessage('${message.id}')" class="text-red-600 hover:text-red-800"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </td>
+                `;
+            });
+        }
+
+        // --- Event Actions ---
+
+        function approveEvent(id) {
+            const eventIndex = allEvents.findIndex(e => e.id === id);
+            if (eventIndex !== -1) {
+                allEvents[eventIndex].status = 'approved';
+                saveData();
+                renderAllTables();
+                updateSummaryCards();
+                alert(`Event "${allEvents[eventIndex].title}" approved!`);
+            }
+        }
+
+        function rejectEvent(id) {
+            if (confirm('Are you sure you want to reject this event? It will be removed.')) {
+                allEvents = allEvents.filter(e => e.id !== id);
+                saveData();
+                renderAllTables();
+                updateSummaryCards();
+                alert('Event rejected and removed.');
+            }
+        }
+
+        function editEvent(id) {
+            const event = allEvents.find(e => e.id === id);
+            if (!event) return;
+
+            formTitle.innerText = 'Edit Event';
+            editingEventId = id;
+
+            // Populate form fields
+            eventTitleInput.value = event.title;
+            // Format date for datetime-local input
+            eventDateInput.value = event.date ? new Date(event.date).toISOString().slice(0, 16) : '';
+            eventTypeInput.value = event.type;
+            eventPriceInput.value = event.price;
+            eventLocationInput.value = event.location;
+            eventInstructorInput.value = event.instructor;
+            eventOrganizerInput.value = event.organizer;
+            eventDescriptionInput.value = event.description;
+            eventLearningsInput.value = event.learnings ? event.learnings.join(', ') : '';
+            eventImageInput.value = event.image;
+            eventOrganizerLogoInput.value = event.organizerLogo;
+
+            eventFormModal.classList.remove('hidden');
+            eventFormModal.classList.add('flex');
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Are you sure you want to permanently delete this event?')) {
+                allEvents = allEvents.filter(e => e.id !== id);
+                saveData();
+                renderAllTables();
+                updateSummaryCards();
+                alert('Event deleted.');
+            }
+        }
+
+        function archiveEvent(id) {
+            if (confirm('Are you sure you want to archive this expired event? It will be removed from the list.')) {
+                allEvents = allEvents.filter(e => e.id !== id);
+                saveData();
+                renderAllTables();
+                updateSummaryCards();
+                alert('Event archived.');
+            }
+        }
+
+        function blockInstitute(id) {
+            const instituteIndex = allInstitutes.findIndex(i => i.id === id);
+            if (instituteIndex !== -1) {
+                allInstitutes[instituteIndex].status = 'blocked';
+                saveData();
+                renderInstitutesTable(institutesTableBody);
+                alert(`Institute "${allInstitutes[instituteIndex].name}" blocked.`);
+            }
+        }
+
+        function unblockInstitute(id) {
+            const instituteIndex = allInstitutes.findIndex(i => i.id === id);
+            if (instituteIndex !== -1) {
+                allInstitutes[instituteIndex].status = 'active';
+                saveData();
+                renderInstitutesTable(institutesTableBody);
+                alert(`Institute "${allInstitutes[instituteIndex].name}" unblocked.`);
+            }
+        }
+
+        function viewMessage(id) {
+            const message = allMessages.find(m => m.id === id);
+            if (message) {
+                alert(`From: ${message.from}\nSubject: ${message.subject}\nDate: ${new Date(message.date).toLocaleString()}\n\nMessage:\n${message.message}`);
+            }
+        }
+
+        function deleteMessage(id) {
+            if (confirm('Are you sure you want to delete this message?')) {
+                allMessages = allMessages.filter(m => m.id !== id);
+                saveData();
+                renderMessagesTable(messagesTableBody);
+                updateSummaryCards(); // Message count affects notification
+                alert('Message deleted.');
+            }
+        }
+
+        // --- Event Form Modal Logic ---
+
+        addEventBtn.addEventListener('click', () => {
+            formTitle.innerText = 'Add New Event';
+            eventForm.reset(); // Clear form fields
+            editingEventId = null; // Not editing an existing event
+            eventFormModal.classList.remove('hidden');
+            eventFormModal.classList.add('flex');
+        });
+
+        function closeEventFormModal() {
+            eventFormModal.classList.remove('flex');
+            eventFormModal.classList.add('hidden');
+        }
+
+        eventForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(eventForm);
+            const newEvent = {
+                id: editingEventId || 'e' + Date.now().toString(), // Use existing ID or generate new one
+                title: formData.get('title'),
+                date: formData.get('date'),
+                description: formData.get('description'),
+                type: formData.get('type'),
+                price: formData.get('price'),
+                image: formData.get('image') || 'https://placehold.co/800x400/AD90F8/white?text=Event+Image',
+                organizerLogo: formData.get('organizerLogo') || 'https://placehold.co/40x40/808080/white?text=Org',
+                organizer: formData.get('organizer'),
+                organizerDesc: 'A leading institute in its field.', // Default description for new events
+                attendees: 0, // New events start with 0 attendees
+                totalSeats: 100, // Default total seats
+                location: formData.get('location'),
+                instructor: formData.get('instructor'),
+                learnings: formData.get('learnings') ? formData.get('learnings').split(',').map(item => item.trim()) : [],
+                status: editingEventId ? allEvents.find(e => e.id === editingEventId).status : 'pending' // Keep status if editing, else 'pending'
+            };
+
+            if (editingEventId) {
+                // Update existing event
+                const index = allEvents.findIndex(event => event.id === editingEventId);
+                if (index !== -1) {
+                    allEvents[index] = newEvent;
+                    alert('Event updated successfully!');
+                }
+            } else {
+                // Add new event
+                allEvents.push(newEvent);
+                alert('New event added for approval!');
+            }
+
+            saveData();
+            renderAllTables();
+            closeEventFormModal();
+        });
+
+        // --- General UI Logic ---
+
+        // Toggle sidebar on mobile
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        // Show/hide profile dropdown
+        profileDropdownToggle.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent click from closing immediately
+            profileDropdown.classList.toggle('hidden');
+        });
+
+        // Show/hide notification dropdown
+        notificationToggle.addEventListener('click', (event) => {
+            event.stopPropagation(); // Prevent click from closing immediately
+            notificationDropdown.classList.toggle('hidden');
+        });
+
+
+        // Close dropdowns if clicked outside
+        window.addEventListener('click', (event) => {
+            if (!profileDropdownToggle.contains(event.target) && !profileDropdown.contains(event.target)) {
+                profileDropdown.classList.add('hidden');
+            }
+            if (!notificationToggle.contains(event.target) && !notificationDropdown.contains(event.target)) {
+                notificationDropdown.classList.add('hidden');
+            }
+        });
+
+        // Function to show a specific content section
+        function showSection(sectionId) {
+            contentSections.forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+
+            // Update active state in sidebar
+            navItems.forEach(item => {
+                item.classList.remove('active-nav');
+                item.classList.remove('bg-gray-700', 'text-white');
+                item.classList.add('text-gray-300', 'hover:bg-gray-700', 'hover:text-white');
+            });
+            const activeNavItem = document.querySelector(`.nav-item[data-section="${sectionId}"]`);
+            if (activeNavItem) {
+                activeNavItem.classList.add('active-nav');
+                activeNavItem.classList.remove('text-gray-300');
+            }
+        }
+
+        // Add event listeners to sidebar navigation items
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = item.dataset.section;
+                showSection(sectionId);
+                // Close sidebar on mobile after selection
+                if (window.innerWidth < 768) { // md breakpoint is 768px
+                    sidebar.classList.add('-translate-x-full');
+                }
+            });
+        });
+
+        // Function to render all relevant tables
+        function renderAllTables() {
+            renderDashboard();
+            renderPendingEventsTable(pendingApprovalsTableBody);
+            renderActiveEventsTable(allActiveEventsTableBody);
+            renderExpiredEventsTable(expiredEventsTableBody);
+            renderInstitutesTable(institutesTableBody);
+            renderMessagesTable(messagesTableBody);
+        }
+
+        // Initial load: show dashboard section and render all data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderAllTables();
+            showSection('dashboard'); // Ensure dashboard is shown first
+
+            // Ensure sidebar is visible on larger screens by default
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+            }
+        });
+
+        // Handle sidebar responsiveness on resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 768) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        });
+    </script>
+</body>
+</html>

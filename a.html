@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduConnect - Institute Event Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom gradient for navigation and hero */
+        .gradient-bg {
+            background: linear-gradient(to right, #6366F1, #8B5CF6); /* Tailwind indigo-500 to purple-500 */
+        }
+        /* Custom styles for the institute cards hover effect */
+        .institute-card:hover h3 {
+            color: #4338CA; /* Darker indigo on hover */
+        }
+        .institute-card:hover p {
+            color: #6366F1; /* Indigo on hover */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-graduation-cap text-2xl"></i>
+                <span class="text-xl font-bold">LearnX</span>
+            </div>
+
+            <div class="hidden md:flex space-x-6">
+                <a href="#events" class="hover:text-gray-200 transition">Events</a>
+                <a href="#institutes" class="hover:text-gray-200 transition">Institutes</a>
+                <a href="about.html" class="hover:text-gray-200 transition">About</a>
+                <a href="login.html" class="hover:text-gray-200 transition">Login</a>
+                <!-- Uncomment the line below to show Admin Dashboard link -->
+                <!-- <a href="admin_dashboard.html" class="hover:text-gray-200 transition">Admin Dashboard</a> -->
+                <a href="login.html" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                    Sign Up
+                </a>
+            </div>
+
+            <!-- Hamburger Button -->
+            <button id="hamburgerBtn" class="md:hidden text-white focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden gradient-bg px-4 py-2 pb-4">
+        <div class="flex flex-col space-y-3 text-white">
+            <a href="#events" class="hover:text-gray-200 transition">Events</a>
+            <a href="#institutes" class="hover:text-gray-200 transition">Institutes</a>
+            <a href="about.html" class="hover:text-gray-200 transition">About</a>
+            <a href="login.html" class="hover:text-gray-200 transition">Login</a>
+            <!-- Uncomment the line below to show Admin Dashboard link -->
+            <!-- <a href="admin_dashboard.html" class="hover:text-gray-200 transition">Admin Dashboard</a> -->
+            <a href="login.html" class="bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                Sign Up
+            </a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-8 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-4">Connect with Learning Opportunities</h1>
+                <p class="text-lg mb-6">Discover upcoming webinars, seminars, and courses from top institutes worldwide.</p>
+                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="conduct-event.html" class="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition text-center">Conduct an Event</a>
+                    <a href="register.html" class="border border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:text-indigo-600 transition text-center">Register as Student</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://placehold.co/600x400/90B7F8/white?text=Online+Learning" alt="Diverse group of students attending an online webinar with laptops and notebooks, looking engaged" class="rounded-lg shadow-xl">
+            </div>
+        </div>
+    </section>
+
+    <!-- Events Section -->
+    <section id="events" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Upcoming Events</h2>
+
+            <!-- Filter Bar -->
+            <div class="bg-gray-50 p-4 rounded-lg mb-8 flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                <div class="flex-1 md:mr-4">
+                    <input type="text" id="searchEventsInput" placeholder="Search events..." class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex flex-col md:flex-row md:items-center space-y-2 md:space-y-0 md:space-x-4">
+                    <select id="categoryFilter" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Categories</option>
+                        <option value="Webinar">Webinar</option>
+                        <option value="Seminar">Seminar</option>
+                        <option value="Course">Course</option>
+                        <option value="Workshop">Workshop</option>
+                    </select>
+                    <select id="locationFilter" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <option value="">All Locations</option>
+                        <option value="Online (Zoom)">Online (Zoom)</option>
+                        <option value="Online (Google Meet)">Online (Google Meet)</option>
+                        <option value="Hybrid (Online & On-site)">Hybrid (Online & On-site)</option>
+                        <option value="Online (Webex)">Online (Webex)</option>
+                        <option value="Online (Microsoft Teams)">Online (Microsoft Teams)</option>
+                    </select>
+                    <input type="date" id="dateFilter" class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="eventCards">
+                <!-- Event cards will be dynamically loaded here by JavaScript -->
+            </div>
+
+            <div class="text-center mt-8">
+                <button id="loadMoreEventsBtn" class="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 transition">Load More</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Institutes Section -->
+    <section id="institutes" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-3xl font-bold text-center mb-12">Featured Institutes</h2>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <!-- Institute 1 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/BFCCEE/white?text=TU" alt="Tech University logo with circuit board design in blue" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium text-blue-900">Tech University</h3>
+                    <p class="text-xs text-blue-800">12 Events</p>
+                </div>
+
+                <!-- Institute 2 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/D6A3A3/white?text=GBS" alt="Business School logo with building icon in dark red" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium">Global Business School</h3>
+                    <p class="text-xs text-gray-500">8 Events</p>
+                </div>
+
+                <!-- Institute 3 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/F0B18A/white?text=DA" alt="Design Academy logo with pencil and ruler icons in orange" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium">Design Academy</h3>
+                    <p class="text-xs text-gray-500">5 Events</p>
+                </div>
+
+                <!-- Institute 4 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/A8D8AD/white?text=LI" alt="Language Institute logo with speech bubbles in green" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium">Language Institute</h3>
+                    <p class="text-xs text-gray-500">7 Events</p>
+                </div>
+
+                <!-- Institute 5 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/E89E9E/white?text=MTC" alt="Medical Training Center logo with cross symbol in red" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium">Medical Training</h3>
+                    <p class="text-xs text-gray-500">9 Events</p>
+                </div>
+
+                <!-- Institute 6 -->
+                <div class="bg-white institute-card p-4 rounded-lg shadow-sm hover:shadow-md transition text-center">
+                    <img src="https://placehold.co/60x60/C2B2D8/white?text=AC" alt="Arts College logo with palette and brush icons" class="w-16 h-16 mx-auto mb-3">
+                    <h3 class="font-medium">Arts College</h3>
+                    <p class="text-xs text-gray-500">4 Events</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-8">
+                <button id="viewAllInstitutesBtn" class="border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg font-medium hover:bg-indigo-50 transition">View All Institutes</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="relative">
+                <img id="modalEventImage" src="https://placehold.co/800x400/AD90F8/white?text=Event+Image" alt="Detailed view of event with keynote speaker on stage at conference" class="w-full h-64 object-cover">
+                <button onclick="closeModal()" class="absolute top-4 right-4 bg-white rounded-full p-2 shadow-md hover:bg-gray-100">
+                    <i class="fas fa-times text-gray-600"></i>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <!-- Step 1: Description -->
+                <div id="modalStep1">
+                    <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-6">
+                        <div class="mb-4 md:mb-0">
+                            <div class="flex items-center mb-2">
+                                <span id="eventType" class="bg-indigo-600 text-white text-xs px-2 py-1 rounded mr-2">Webinar</span>
+                                <span id="eventPrice" class="bg-green-500 text-white text-xs px-2 py-1 rounded">Free</span>
+                            </div>
+                            <h2 id="eventTitle" class="text-2xl font-bold">AI for Beginners</h2>
+                            <p id="eventDateDisplay" class="text-gray-500"><i class="far fa-calendar-alt mr-1"></i> May 15, 2023 | <i class="far fa-clock mr-1"></i> 2:00 PM - 4:00 PM</p>
+                        </div>
+                        <button onclick="showPaymentOptions()" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Register Now</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-bold mb-2 flex items-center">
+                                <i class="fas fa-map-marker-alt mr-2 text-indigo-600"></i> Location
+                            </h3>
+                            <p id="eventLocation" class="text-gray-700">Online (Zoom)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-bold mb-2 flex items-center">
+                                <i class="fas fa-chalkboard-teacher mr-2 text-indigo-600"></i> Instructor
+                            </h3>
+                            <p id="eventInstructor" class="text-gray-700">Dr. Sarah Johnson</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="font-bold mb-2 flex items-center">
+                                <i class="fas fa-users mr-2 text-indigo-600"></i> Seats
+                            </h3>
+                            <p id="eventSeats" class="text-gray-700">45/100 registered</p>
+                        </div>
+                    </div>
+
+                    <h3 class="font-bold text-xl mb-3">About This Event</h3>
+                    <p id="eventDescription" class="text-gray-700 mb-6">
+                        This webinar will introduce you to the fundamental concepts of Artificial Intelligence.
+                        Our expert instructor will guide you through machine learning basics, neural networks,
+                        and real-world AI applications. Perfect for beginners with no prior experience.
+                    </p>
+
+                    <h3 class="font-bold text-xl mb-3">What You'll Learn</h3>
+                    <ul id="eventLearnList" class="list-disc pl-5 mb-6 space-y-2 text-gray-700">
+                        <li>Understand basic AI concepts and terminology</li>
+                        <li>Explore real-world AI applications</li>
+                        <li>Introduction to machine learning algorithms</li>
+                        <li>Overview of neural networks</li>
+                        <li>Getting started with AI projects</li>
+                    </ul>
+
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h3 class="font-bold mb-2 flex items-center">
+                            <i class="fas fa-university mr-2 text-indigo-600"></i> Hosted By
+                        </h3>
+                        <div class="flex items-center">
+                            <img id="organizerLogo" src="https://placehold.co/60x60/808080/white?text=Org" alt="Tech Institute logo detailed view" class="w-12 h-12 rounded-full mr-3">
+                            <div>
+                                <p id="organizerName" class="font-medium">Tech Education Institute</p>
+                                <p id="organizerDescription" class="text-sm text-gray-500">Specializing in technology education since 2010</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h3 class="font-bold mb-2">Contact the Organizer</h3>
+                        <form>
+                            <div class="mb-3">
+                                <input type="text" placeholder="Your Name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="mb-3">
+                                <input type="email" placeholder="Your Email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div class="mb-3">
+                                <textarea placeholder="Your Message" rows="3" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <button type="button" class="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Step 2: Payment Options -->
+                <div id="modalStep2" class="hidden">
+                    <h4 class="text-xl font-semibold mb-3">Select Payment Method</h4>
+                    <form id="paymentForm">
+                        <label class="block mb-2">
+                            <input type="radio" name="payment" value="UPI" required> UPI
+                        </label>
+                        <label class="block mb-2">
+                            <input type="radio" name="payment" value="Card"> Credit/Debit Card
+                        </label>
+                        <label class="block mb-4">
+                            <input type="radio" name="payment" value="NetBanking"> Net Banking
+                        </label>
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Pay Now
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 3: Payment Success -->
+                <div id="modalStep3" class="hidden text-center">
+                    <h4 class="text-2xl font-semibold text-green-600 mb-4">✅ Registration Successful!</h4>
+                    <p class="text-gray-700">You have successfully registered for the event.</p>
+                    <button onclick="closeModal()" class="mt-4 bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Start -->
+    <footer style="background-color:#6f62da; color:white; padding:20px 10px; text-align:center;">
+        <div style="margin-bottom: 10px;">
+            <a href="about.html" style="color:white; margin:0 10px; text-decoration:none;">About</a> |
+            <a href="contact.html" style="color:white; margin:0 10px; text-decoration:none;">Contact</a> |
+            <a href="#" style="color:white; margin:0 10px; text-decoration:none;">Privacy Policy</a>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+            <a href="#" style="margin: 0 8px; color: white;"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" style="margin: 0 8px; color: white;"><i class="fab fa-twitter"></i></a>
+            <a href="#" style="margin: 0 8px; color: white;"><i class="fab fa-instagram"></i></a>
+            <a href="#" style="margin: 0 8px; color: white;"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+
+        <p style="font-size: 14px;">&copy; 2025 <strong>LearnX Platform</strong>. All rights reserved.</p>
+        <p style="font-size: 13px;">Empowering Institutions | Enabling Students | Elevating Learning</p>
+    </footer>
+    <!-- Footer End -->
+
+    <!-- JavaScript -->
+    <script>
+        const hamburger = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const eventCardsContainer = document.getElementById("eventCards");
+        const loadMoreEventsBtn = document.getElementById("loadMoreEventsBtn");
+        const viewAllInstitutesBtn = document.getElementById("viewAllInstitutesBtn");
+
+        // Filter elements
+        const searchEventsInput = document.getElementById('searchEventsInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const locationFilter = document.getElementById('locationFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const paymentForm = document.getElementById('paymentForm');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Event data - loaded from localStorage or default if not found
+        let allEvents = [];
+        try {
+            const storedEvents = localStorage.getItem('learnXEvents');
+            if (storedEvents) {
+                allEvents = JSON.parse(storedEvents);
+            } else {
+                // Default events if nothing in localStorage
+                allEvents = [
+                    {
+                        id: 'event1',
+                        title: "AI for Beginners",
+                        date: "2025-08-01T10:00:00",
+                        description: "This webinar will introduce you to the fundamental concepts of Artificial Intelligence. Our expert instructor will guide you through machine learning basics, neural networks, and real-world AI applications. Perfect for beginners with no prior experience.",
+                        type: "Webinar",
+                        price: "Free",
+                        image: "https://placehold.co/800x400/AD90F8/white?text=AI+Webinar",
+                        organizerLogo: "https://placehold.co/40x40/90B7F8/white?text=TI",
+                        organizer: "Tech Education Institute",
+                        organizerDesc: "Specializing in technology education since 2010",
+                        attendees: 45,
+                        totalSeats: 100,
+                        location: "Online (Zoom)",
+                        instructor: "Dr. Sarah Johnson",
+                        learnings: [
+                            "Understand basic AI concepts and terminology",
+                            "Explore real-world AI applications",
+                            "Introduction to machine learning algorithms",
+                            "Overview of neural networks",
+                            "Getting started with AI projects"
+                        ]
+                    },
+                    {
+                        id: 'event2',
+                        title: "Digital Marketing Masterclass",
+                        date: "2025-08-05T14:00:00",
+                        description: "Dive deep into advanced techniques for digital marketing professionals, covering SEO, SEM, social media strategies, and content marketing.",
+                        type: "Seminar",
+                        price: "$49",
+                        image: "https://placehold.co/800x400/D6A3A3/white?text=Digital+Marketing",
+                        organizerLogo: "https://placehold.co/40x40/D6A3A3/white?text=MA",
+                        organizer: "Marketing Academy",
+                        organizerDesc: "Leading experts in digital marketing training.",
+                        attendees: 28,
+                        totalSeats: 50,
+                        location: "Online (Google Meet)",
+                        instructor: "Mr. John Smith",
+                        learnings: [
+                            "Advanced SEO and SEM strategies",
+                            "Effective social media campaigns",
+                            "Content marketing for lead generation",
+                            "Analytics and reporting"
+                        ]
+                    },
+                    {
+                        id: 'event3',
+                        title: "Data Science Bootcamp",
+                        date: "2025-08-10T09:00:00",
+                        description: "An 8-week intensive course covering Python programming, machine learning algorithms, data visualization, and big data concepts.",
+                        type: "Course",
+                        price: "$199",
+                        image: "https://placehold.co/800x400/F0B18A/white?text=Data+Science",
+                        organizerLogo: "https://placehold.co/40x40/F0B18A/white?text=DSI",
+                        organizer: "Data Science Institute",
+                        organizerDesc: "Your gateway to a career in data science.",
+                        attendees: 62,
+                        totalSeats: 75,
+                        location: "Hybrid (Online & On-site)",
+                        instructor: "Dr. Emily White",
+                        learnings: [
+                            "Python for data analysis",
+                            "Machine learning models (regression, classification)",
+                            "Data visualization with Matplotlib and Seaborn",
+                            "Introduction to big data tools"
+                        ]
+                    },
+                    {
+                        id: 'event4',
+                        title: "Web Development Fundamentals",
+                        date: "2025-07-15T10:00:00", // Expired event - will not be displayed
+                        description: "Learn the basics of HTML, CSS, and JavaScript to build your first website.",
+                        type: "Workshop",
+                        price: "Free",
+                        image: "https://placehold.co/800x400/A8D8AD/white?text=Web+Dev",
+                        organizerLogo: "https://placehold.co/40x40/A8D8AD/white?text=WC",
+                        organizer: "Web Creators Hub",
+                        organizerDesc: "Building the next generation of web developers.",
+                        attendees: 120,
+                        totalSeats: 150,
+                        location: "Online (Zoom)",
+                        instructor: "Ms. Priya Sharma",
+                        learnings: [
+                            "HTML structure and semantics",
+                            "CSS styling and layout",
+                            "JavaScript for interactivity",
+                            "Basic responsive design"
+                        ]
+                    },
+                    {
+                        id: 'event5',
+                        title: "Graphic Design Principles",
+                        date: "2025-07-20T16:00:00", // Current date/time is 8:24 AM IST, so this event starts today.
+                        description: "Explore the core principles of graphic design, including typography, color theory, and composition.",
+                        type: "Webinar",
+                        price: "$15",
+                        image: "https://placehold.co/800x400/E89E9E/white?text=Graphic+Design",
+                        organizerLogo: "https://placehold.co/40x40/E89E9E/white?text=DA",
+                        organizer: "Creative Arts Institute",
+                        organizerDesc: "Fostering creativity through design education.",
+                        attendees: 30,
+                        totalSeats: 60,
+                        location: "Online (Webex)",
+                        instructor: "Mr. David Lee",
+                        learnings: [
+                            "Understanding design elements and principles",
+                            "Color theory and application",
+                            "Effective typography",
+                            "Layout and composition techniques"
+                        ]
+                    },
+                    {
+                        id: 'event6',
+                        title: "Introduction to Cloud Computing",
+                        date: "2025-08-15T11:00:00",
+                        description: "Get a foundational understanding of cloud computing concepts, services, and popular providers like AWS, Azure, and Google Cloud.",
+                        type: "Seminar",
+                        price: "Free",
+                        image: "https://placehold.co/800x400/C2B2D8/white?text=Cloud+Computing",
+                        organizerLogo: "https://placehold.co/40x40/C2B2D8/white?text=CCI",
+                        organizer: "Cloud Computing Institute",
+                        organizerDesc: "Your partner in cloud technology education.",
+                        attendees: 80,
+                        totalSeats: 120,
+                        location: "Online (Microsoft Teams)",
+                        instructor: "Dr. Alex Chen",
+                        learnings: [
+                            "What is cloud computing?",
+                            "Types of cloud services (IaaS, PaaS, SaaS)",
+                            "Introduction to AWS, Azure, GCP",
+                            "Benefits and challenges of cloud adoption"
+                        ]
+                    }
+                ];
+                localStorage.setItem('learnXEvents', JSON.stringify(allEvents)); // Save default to localStorage
+            }
+        } catch (e) {
+            console.error("Error accessing localStorage:", e);
+            // Fallback to default events if localStorage is not accessible
+            allEvents = [
+                // ... (default events as above)
+            ];
+        }
+
+
+        let eventsToShow = 3; // Number of events to show initially
+        let currentFilteredEvents = []; // To store events after applying filters
+
+        /**
+         * Filters events based on search query, category, location, and date.
+         * Then renders them to the page.
+         */
+        function filterAndRenderEvents() {
+            const searchTerm = searchEventsInput.value.toLowerCase();
+            const selectedCategory = categoryFilter.value;
+            const selectedLocation = locationFilter.value;
+            const selectedDate = dateFilter.value; // YYYY-MM-DD format
+
+            const now = new Date();
+
+            currentFilteredEvents = allEvents.filter(event => {
+                const eventDate = new Date(event.date);
+                const eventDateString = eventDate.toISOString().split('T')[0]; // Get YYYY-MM-DD
+
+                // 1. Auto-expiry: Only show future events
+                if (eventDate <= now) {
+                    return false;
+                }
+
+                // 2. Search Term
+                const matchesSearch = !searchTerm ||
+                                      event.title.toLowerCase().includes(searchTerm) ||
+                                      event.description.toLowerCase().includes(searchTerm) ||
+                                      event.organizer.toLowerCase().includes(searchTerm) ||
+                                      event.type.toLowerCase().includes(searchTerm) ||
+                                      event.location.toLowerCase().includes(searchTerm);
+
+                // 3. Category Filter
+                const matchesCategory = !selectedCategory || event.type === selectedCategory;
+
+                // 4. Location Filter
+                const matchesLocation = !selectedLocation || event.location === selectedLocation;
+
+                // 5. Date Filter
+                const matchesDate = !selectedDate || eventDateString === selectedDate;
+
+                return matchesSearch && matchesCategory && matchesLocation && matchesDate;
+            });
+
+            // Sort events by date (earliest first)
+            currentFilteredEvents.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            renderVisibleEvents();
+        }
+
+        /**
+         * Renders a subset of the currently filtered events to the DOM.
+         */
+        function renderVisibleEvents() {
+            eventCardsContainer.innerHTML = ''; // Clear existing cards
+
+            const eventsToDisplay = currentFilteredEvents.slice(0, eventsToShow);
+
+            eventsToDisplay.forEach(event => {
+                const eventDate = new Date(event.date);
+                const hoursLeft = (eventDate - new Date()) / (1000 * 60 * 60);
+                const reminderSoon = hoursLeft > 0 && hoursLeft <= 24; // Within 24 hours
+
+                const card = document.createElement("div");
+                card.className = "bg-white border rounded-lg overflow-hidden shadow-md hover:shadow-lg transition duration-300";
+
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${event.image}" alt="${event.title}" class="w-full h-48 object-cover">
+                        <span class="absolute top-2 left-2 bg-indigo-600 text-white text-xs px-2 py-1 rounded">${event.type}</span>
+                        <span class="absolute bottom-2 left-2 ${event.price === 'Free' ? 'bg-green-500' : 'bg-yellow-500'} text-white text-xs px-2 py-1 rounded">${event.price}</span>
+                        ${reminderSoon ? `<span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs px-2 py-1 rounded">Starts in ${Math.ceil(hoursLeft)}h</span>` : ""}
+                    </div>
+                    <div class="p-6">
+                        <div class="flex justify-between items-start mb-2">
+                            <h3 class="text-xl font-bold">${event.title}</h3>
+                            <span class="text-sm text-gray-500">${eventDate.toLocaleDateString()} ${eventDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">${event.description}</p>
+                        <div class="flex items-center mb-4">
+                            <img src="${event.organizerLogo}" alt="${event.organizer}" class="w-8 h-8 rounded-full mr-2">
+                            <span class="text-sm font-medium">${event.organizer}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500"><i class="fas fa-users mr-1"></i> ${event.attendees} registered</span>
+                            <button onclick="openModal('${event.id}')" class="mt-2 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">View Details</button>
+                        </div>
+                    </div>
+                `;
+                eventCardsContainer.appendChild(card);
+            });
+
+            // Hide "Load More" button if all filtered events are shown
+            if (eventsToShow >= currentFilteredEvents.length) {
+                loadMoreEventsBtn.classList.add('hidden');
+            } else {
+                loadMoreEventsBtn.classList.remove('hidden');
+            }
+        }
+
+        // Event Listeners for filters
+        searchEventsInput.addEventListener('input', () => {
+            eventsToShow = 3; // Reset load count on filter change
+            filterAndRenderEvents();
+        });
+        categoryFilter.addEventListener('change', () => {
+            eventsToShow = 3;
+            filterAndRenderEvents();
+        });
+        locationFilter.addEventListener('change', () => {
+            eventsToShow = 3;
+            filterAndRenderEvents();
+        });
+        dateFilter.addEventListener('change', () => {
+            eventsToShow = 3;
+            filterAndRenderEvents();
+        });
+
+
+        loadMoreEventsBtn.addEventListener('click', () => {
+            eventsToShow += 3; // Load 3 more events
+            renderVisibleEvents();
+        });
+
+        // Initial render of events on page load
+        filterAndRenderEvents();
+
+        let currentEventId = null; // To store the ID of the event currently open in the modal
+
+        function openModal(eventId) {
+            currentEventId = eventId; // Store the current event ID
+            const event = allEvents.find(e => e.id === eventId);
+            if (!event) return;
+
+            // Populate modal with event details
+            document.getElementById('modalEventImage').src = event.image;
+            document.getElementById('eventType').innerText = event.type;
+            document.getElementById('eventPrice').innerText = event.price;
+            document.getElementById('eventPrice').className = `bg-${event.price === 'Free' ? 'green-500' : 'yellow-500'} text-white text-xs px-2 py-1 rounded`; // Update color based on price
+            document.getElementById('eventTitle').innerText = event.title;
+            const eventDateTime = new Date(event.date);
+            // Estimate end time as 2 hours after start for display
+            const endTime = new Date(eventDateTime.getTime() + (2 * 60 * 60 * 1000));
+            document.getElementById('eventDateDisplay').innerHTML = `<i class="far fa-calendar-alt mr-1"></i> ${eventDateTime.toLocaleDateString()} | <i class="far fa-clock mr-1"></i> ${eventDateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${endTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+            document.getElementById('eventLocation').innerText = event.location;
+            document.getElementById('eventInstructor').innerText = event.instructor;
+            document.getElementById('eventSeats').innerText = `${event.attendees}/${event.totalSeats} registered`;
+            document.getElementById('eventDescription').innerText = event.description;
+
+            const learnList = document.getElementById('eventLearnList');
+            learnList.innerHTML = ''; // Clear previous learnings
+            event.learnings.forEach(item => {
+                const li = document.createElement('li');
+                li.innerText = item;
+                learnList.appendChild(li);
+            });
+
+            document.getElementById('organizerLogo').src = event.organizerLogo;
+            document.getElementById('organizerName').innerText = event.organizer;
+            document.getElementById('organizerDescription').innerText = event.organizerDesc;
+
+
+            document.getElementById('eventModal').classList.remove('hidden');
+            document.getElementById('eventModal').classList.add('flex');
+
+            // Show Step 1 (description), hide others initially
+            document.getElementById('modalStep1').classList.remove('hidden');
+            document.getElementById('modalStep2').classList.add('hidden');
+            document.getElementById('modalStep3').classList.add('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').classList.remove('flex');
+            document.getElementById('eventModal').classList.add('hidden');
+            currentEventId = null; // Clear current event ID
+        }
+
+        function showPaymentOptions() {
+            const event = allEvents.find(e => e.id === currentEventId);
+            if (event && event.price === 'Free') {
+                // If event is free, skip payment and go straight to success
+                document.getElementById('modalStep1').classList.add('hidden');
+                document.getElementById('modalStep2').classList.add('hidden');
+                document.getElementById('modalStep3').classList.remove('hidden');
+                document.getElementById('modalStep3').querySelector('h4').innerText = '✅ Registration Successful!';
+                document.getElementById('modalStep3').querySelector('p').innerText = 'You have successfully registered for this free event.';
+            } else {
+                document.getElementById('modalStep1').classList.add('hidden');
+                document.getElementById('modalStep2').classList.remove('hidden');
+            }
+        }
+
+        paymentForm.addEventListener('submit', handlePayment);
+
+        function handlePayment(e) {
+            e.preventDefault(); // Prevent default form submission
+
+            const selectedPaymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            let paymentUrl = '';
+
+            switch (selectedPaymentMethod) {
+                case 'UPI':
+                    paymentUrl = 'https://pay.upi.example.com/payment?amount='; // Placeholder
+                    break;
+                case 'Card':
+                    paymentUrl = 'https://card.gateway.example.com/checkout?amount='; // Placeholder
+                    break;
+                case 'NetBanking':
+                    paymentUrl = 'https://netbanking.portal.example.com/pay?amount='; // Placeholder
+                    break;
+                default:
+                    paymentUrl = 'https://example.com/payment-error';
+            }
+
+            const event = allEvents.find(e => e.id === currentEventId);
+            const amount = event && event.price !== 'Free' ? parseFloat(event.price.replace('$', '')) : 0;
+
+            if (amount > 0) {
+                window.open(paymentUrl + amount, '_blank'); // Open payment gateway in new tab
+            } else {
+                // For free events, or if amount is 0, directly show success
+                document.getElementById('modalStep1').classList.add('hidden');
+                document.getElementById('modalStep2').classList.add('hidden');
+                document.getElementById('modalStep3').classList.remove('hidden');
+                document.getElementById('modalStep3').querySelector('h4').innerText = '✅ Registration Successful!';
+                document.getElementById('modalStep3').querySelector('p').innerText = 'You have successfully registered for this event.';
+            }
+
+            // After simulating payment, you might want to show success in modal or close it
+            // For now, we'll just show the success message in the modal after a short delay
+            setTimeout(() => {
+                document.getElementById('modalStep2').classList.add('hidden');
+                document.getElementById('modalStep3').classList.remove('hidden');
+            }, 1000); // simulate delay
+        }
+
+
+        viewAllInstitutesBtn.addEventListener('click', () => {
+            alert('Navigating to All Institutes page or section!');
+            // Example: window.location.href = 'all-institutes.html';
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Registration & Subscription</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Optional: Custom styles for a more specific look or overrides */
+        body {
+            background-color: #f0f2f5; /* A light grey background */
+            font-family: "Inter", sans-serif; /* Using Inter font */
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 2rem auto;
+            background-color: #ffffff;
+            padding: 2.5rem;
+            border-radius: 0.75rem; /* Rounded corners */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            opacity: 1; /* Default opacity for transitions */
+            transform: translateY(0); /* Default position for transitions */
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Smooth transition for form container */
+        }
+        .form-container.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none; /* Disable interactions when hidden */
+        }
+        /* Replaced @apply with direct Tailwind classes */
+        .input-field {
+            display: block;
+            width: 100%;
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem; /* px-4 */
+            padding-top: 0.5rem; /* py-2 */
+            padding-bottom: 0.5rem; /* py-2 */
+            margin-top: 0.25rem; /* mt-1 */
+            border-width: 1px;
+            border-color: #d1d5db; /* border-gray-300 */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
+            font-size: 0.875rem; /* sm:text-sm */
+            line-height: 1.25rem; /* sm:text-sm */
+            transition-property: all; /* transition */
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+            transition-duration: 300ms; /* duration-300 */
+        }
+        .input-field:focus {
+            outline: 2px solid transparent; /* focus:outline-none */
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500 */
+            border-color: #3b82f6; /* focus:border-blue-500 */
+        }
+        .input-field:hover {
+            border-color: #a7c7ed; /* Lighter blue on hover */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow on hover */
+        }
+        /* Replaced @apply with direct Tailwind classes */
+        .checkbox-label {
+            margin-left: 0.5rem; /* ml-2 */
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            line-height: 1.25rem; /* text-sm */
+            color: #1f2937; /* text-gray-900 */
+        }
+        /* Replaced @apply with direct Tailwind classes */
+        .submit-button {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 0.5rem; /* py-2 */
+            padding-bottom: 0.5rem; /* py-2 */
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem; /* px-4 */
+            border-width: 1px;
+            border-color: transparent;
+            font-size: 0.875rem; /* text-sm */
+            line-height: 1.25rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            border-radius: 0.5rem; /* rounded-lg */
+            color: #ffffff; /* text-white */
+            background-color: #3b82f6; /* bg-blue-600 */
+            transition-property: all; /* transition */
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+            transition-duration: 200ms; /* duration-200 */
+            transform: scale(1); /* transform */
+        }
+        .submit-button:hover {
+            background-color: #2563eb; /* hover:bg-blue-700 */
+            transform: scale(1.05); /* hover:scale-105 */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* hover:shadow-lg */
+        }
+        .submit-button:focus {
+            outline: 2px solid transparent; /* focus:outline-none */
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500 */
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #3b82f6; /* focus:ring-offset-2 focus:ring-blue-500 */
+        }
+        /* Replaced @apply with direct Tailwind classes */
+        .go-back-button {
+            margin-top: 1.5rem; /* mt-6 */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding-top: 0.5rem; /* py-2 */
+            padding-bottom: 0.5rem; /* py-2 */
+            padding-left: 1rem; /* px-4 */
+            padding-right: 1rem; /* px-4 */
+            border-width: 1px;
+            border-color: transparent;
+            font-size: 0.875rem; /* text-sm */
+            line-height: 1.25rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            border-radius: 0.5rem; /* rounded-lg */
+            color: #1d4ed8; /* text-blue-700 */
+            background-color: #dbeafe; /* bg-blue-100 */
+            transition-property: all; /* transition */
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* ease-in-out */
+            transition-duration: 200ms; /* duration-200 */
+            transform: scale(1); /* transform */
+        }
+        .go-back-button:hover {
+            background-color: #bfdbfe; /* hover:bg-blue-200 */
+            transform: scale(1.05); /* hover:scale-105 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* hover:shadow-md */
+        }
+        .go-back-button:focus {
+            outline: 2px solid transparent; /* focus:outline-none */
+            outline-offset: 2px;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.5); /* focus:ring-blue-500 */
+            box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #3b82f6; /* focus:ring-offset-2 focus:ring-blue-500 */
+        }
+        /* Styles for radio/checkbox checked state */
+        input[type="radio"]:checked,
+        input[type="checkbox"]:checked {
+            border-color: #3b82f6; /* Blue-500 */
+            background-color: #3b82f6; /* Blue-500 */
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        /* Preview section specific transitions */
+        .preview-item {
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+        .preview-item.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Subscription options dynamic height transition */
+        #subscription-options {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.7s ease-in-out, opacity 0.7s ease-in-out;
+        }
+        #subscription-options.show-options {
+            max-height: 500px; /* A value large enough to contain all options */
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-800">
+
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div id="registration-form-container" class="form-container">
+            <div>
+                <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                    Register for Our Events
+                </h2>
+                <p class="mt-2 text-center text-sm text-gray-600">
+                    Fill in your details to secure your spot and explore our subscription options.
+                </p>
+            </div>
+            <form id="registration-form" class="mt-8 space-y-6" action="#" method="POST">
+                <!-- Event Selection -->
+                <div>
+                    <label for="event-select" class="block text-sm font-medium text-gray-700">Select Event</label>
+                    <select id="event-select" name="event" required class="input-field">
+                        <option value="">Please select an event</option>
+                        <option value="tech-innovation-summit">Tech University: Innovation Summit</option>
+                        <option value="global-econ-forum">Global Business School: Economic Forum</option>
+                        <option value="creative-design-expo">Design Academy: Creative Expo</option>
+                        <option value="language-immersion-workshop">Language Institute: Immersion Workshop</option>
+                        <option value="medical-advances-seminar">Medical Training: Advances Seminar</option>
+                        <option value="art-exhibition-gala">Arts College: Annual Art Exhibition</option>
+                        <option value="other">Other Event (Please specify in notes)</option>
+                    </select>
+                </div>
+
+                <!-- Personal Information -->
+                <div>
+                    <label for="full-name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                    <input id="full-name" name="fullName" type="text" autocomplete="name" required class="input-field" placeholder="John Doe">
+                </div>
+                <div>
+                    <label for="email-address" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input id="email-address" name="email" type="email" autocomplete="email" required class="input-field" placeholder="you@example.com">
+                </div>
+                <div>
+                    <label for="phone-number" class="block text-sm font-medium text-gray-700">Phone Number (Optional)</label>
+                    <input id="phone-number" name="phone" type="tel" autocomplete="tel" class="input-field" placeholder="+91 9876543210">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Create Password</label>
+                    <input id="password" name="password" type="password" autocomplete="new-password" required class="input-field" placeholder="********">
+                </div>
+
+                <!-- Subscription Options -->
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex items-center">
+                        <input id="subscribe-checkbox" name="optInSubscription" type="checkbox" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" onchange="toggleSubscriptionOptions()">
+                        <label for="subscribe-checkbox" class="checkbox-label font-medium">Yes, I want to explore subscription options!</label>
+                    </div>
+
+                    <div id="subscription-options" class="mt-4 space-y-4">
+                        <p class="text-sm font-medium text-gray-700">Choose your subscription plan:</p>
+
+                        <!-- Free Newsletter -->
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="newsletter" name="subscriptionPlan" type="radio" value="Free Newsletter" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="newsletter" class="font-medium text-gray-900">Free Newsletter</label>
+                                <p class="text-gray-500">Get weekly updates, event highlights, and exclusive articles directly in your inbox.</p>
+                            </div>
+                        </div>
+
+                        <!-- Premium Access -->
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="premium-access" name="subscriptionPlan" type="radio" value="Premium Access ($9.99/month)" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="premium-access" class="font-medium text-gray-900">Premium Access ($9.99/month)</label>
+                                <p class="text-gray-500">Unlock early bird event registration, access to exclusive webinars, and premium content library.</p>
+                            </div>
+                        </div>
+
+                        <!-- VIP Membership -->
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="vip-membership" name="subscriptionPlan" type="radio" value="VIP Membership ($29.99/month)" class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="vip-membership" class="font-medium text-gray-900">VIP Membership ($29.99/month)</label>
+                                <p class="text-gray-500">All Premium benefits plus direct networking opportunities, priority support, and discount on paid workshops.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Conditions -->
+                <div class="flex items-center">
+                    <input id="terms-conditions" name="terms" type="checkbox" required class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                    <label for="terms-conditions" class="checkbox-label">
+                        I agree to the <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Terms & Conditions</a> and <a href="#" class="font-medium text-blue-600 hover:text-blue-500">Privacy Policy</a>.
+                    </label>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit" class="submit-button">
+                        Register Now
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Registration Preview Section (Initially Hidden) -->
+        <div id="registration-preview-container" class="form-container hidden">
+            <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                Registration Summary
+            </h2>
+            <p class="mt-2 text-center text-sm text-gray-600 mb-6">
+                Please review your registration details below.
+            </p>
+
+            <div class="space-y-4 text-gray-700">
+                <div class="preview-item" style="transition-delay: 0.1s;">
+                    <p class="font-medium">Event:</p>
+                    <p id="preview-event" class="ml-4"></p>
+                </div>
+                <div class="preview-item" style="transition-delay: 0.2s;">
+                    <p class="font-medium">Full Name:</p>
+                    <p id="preview-full-name" class="ml-4"></p>
+                </div>
+                <div class="preview-item" style="transition-delay: 0.3s;">
+                    <p class="font-medium">Email Address:</p>
+                    <p id="preview-email" class="ml-4"></p>
+                </div>
+                <div class="preview-item" style="transition-delay: 0.4s;">
+                    <p class="font-medium">Phone Number:</p>
+                    <p id="preview-phone" class="ml-4"></p>
+                </div>
+                <div id="preview-subscription-section" class="preview-item hidden" style="transition-delay: 0.5s;">
+                    <p class="font-medium">Subscription Plan:</p>
+                    <p id="preview-subscription-plan" class="ml-4"></p>
+                </div>
+            </div>
+
+            <button id="go-back-button" class="go-back-button">
+                Go Back to Edit
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle the visibility of subscription options with smooth transition
+        function toggleSubscriptionOptions() {
+            const checkbox = document.getElementById('subscribe-checkbox');
+            const optionsDiv = document.getElementById('subscription-options');
+            if (checkbox.checked) {
+                optionsDiv.classList.add('show-options');
+            } else {
+                optionsDiv.classList.remove('show-options');
+            }
+        }
+
+        // Get elements for form and preview
+        const registrationForm = document.getElementById('registration-form');
+        const registrationFormContainer = document.getElementById('registration-form-container');
+        const previewContainer = document.getElementById('registration-preview-container');
+        const goBackButton = document.getElementById('go-back-button');
+
+        // Function to handle form submission and show preview
+        registrationForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Get form data
+            const eventSelect = document.getElementById('event-select').value;
+            const fullName = document.getElementById('full-name').value;
+            const email = document.getElementById('email-address').value;
+            const phone = document.getElementById('phone-number').value;
+            const subscribeCheckbox = document.getElementById('subscribe-checkbox').checked;
+
+            let subscriptionPlan = 'Not subscribed';
+            if (subscribeCheckbox) {
+                const selectedSubscription = document.querySelector('input[name="subscriptionPlan"]:checked');
+                if (selectedSubscription) {
+                    subscriptionPlan = selectedSubscription.value;
+                }
+            }
+
+            // Populate preview section
+            document.getElementById('preview-event').textContent = eventSelect || 'Not selected';
+            document.getElementById('preview-full-name').textContent = fullName;
+            document.getElementById('preview-email').textContent = email;
+            document.getElementById('preview-phone').textContent = phone || 'N/A';
+
+            const previewSubscriptionSection = document.getElementById('preview-subscription-section');
+            const previewSubscriptionPlan = document.getElementById('preview-subscription-plan');
+
+            if (subscribeCheckbox) {
+                previewSubscriptionPlan.textContent = subscriptionPlan;
+                previewSubscriptionSection.classList.remove('hidden');
+            } else {
+                previewSubscriptionSection.classList.add('hidden');
+            }
+
+            // Add 'hidden' class to form container first to trigger transition
+            registrationFormContainer.classList.add('hidden');
+
+            // After a short delay to allow form to transition out, show preview
+            setTimeout(() => {
+                previewContainer.classList.remove('hidden');
+                // Trigger item-by-item animation in preview
+                const previewItems = previewContainer.querySelectorAll('.preview-item');
+                previewItems.forEach((item) => {
+                    item.classList.add('show');
+                });
+            }, 500); // Match this delay with the form-container transition duration
+        });
+
+        // Function to go back to the form from the preview
+        goBackButton.addEventListener('click', function() {
+            // Add 'hidden' class to preview container first to trigger transition
+            previewContainer.classList.add('hidden');
+            // Remove 'show' class from preview items
+            const previewItems = previewContainer.querySelectorAll('.preview-item');
+            previewItems.forEach((item) => {
+                item.classList.remove('show');
+            });
+
+            // After a short delay to allow preview to transition out, show form
+            setTimeout(() => {
+                registrationFormContainer.classList.remove('hidden');
+            }, 500); // Match this delay with the form-container transition duration
+        });
+
+        // Initialize state on page load in case of browser autofill or back button
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure subscription options are correctly hidden/shown on load
+            // This is important if the checkbox state is remembered by the browser
+            toggleSubscriptionOptions();
+        });
+    </script>
+
+</body>
+</html>
